@@ -55,6 +55,22 @@
                                     <action selector="onSetCookieButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ydy-Ym-wCs"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oXs-M8-UQo">
+                                <rect key="frame" x="113" y="196" width="95" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Clear Cookies"/>
+                                <connections>
+                                    <action selector="doClearCookies:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Hep-i2-wxl"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pBD-f1-v78">
+                                <rect key="frame" x="115" y="234" width="90" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="GET Request"/>
+                                <connections>
+                                    <action selector="doGetRequest:" destination="BYZ-38-t0r" eventType="touchUpInside" id="T60-E0-gQH"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>

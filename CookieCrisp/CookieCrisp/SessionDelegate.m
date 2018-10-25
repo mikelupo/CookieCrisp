@@ -30,6 +30,7 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler
 {
+	NSLog(@"Original HTTP Response Headers (before the redirect request was crafted by apple) is: %@", [response allHeaderFields]);
 	NSLog(@"You were redirected. New request is: %@ ", request.URL );
 	NSLog(@"New HTTP Headers are: %@", request.allHTTPHeaderFields);
 	completionHandler(request);

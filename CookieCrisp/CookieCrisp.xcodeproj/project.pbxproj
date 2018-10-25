@@ -106,6 +106,8 @@
 			children = (
 				5ACCFE312180E08000119179 /* AppDelegate.h */,
 				5ACCFE322180E08000119179 /* AppDelegate.m */,
+				5ACCFE6A2180E65000119179 /* SessionDelegate.h */,
+				5ACCFE6B2180E77600119179 /* SessionDelegate.m */,
 				5ACCFE342180E08000119179 /* ViewController.h */,
 				5ACCFE352180E08000119179 /* ViewController.m */,
 				5ACCFE372180E08000119179 /* Main.storyboard */,
@@ -113,8 +115,6 @@
 				5ACCFE3C2180E08200119179 /* LaunchScreen.storyboard */,
 				5ACCFE3F2180E08200119179 /* Info.plist */,
 				5ACCFE402180E08200119179 /* main.m */,
-				5ACCFE6A2180E65000119179 /* SessionDelegate.h */,
-				5ACCFE6B2180E77600119179 /* SessionDelegate.m */,
 			);
 			path = CookieCrisp;
 			sourceTree = "<group>";

@@ -24,7 +24,6 @@
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
-
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
 	// Dispose of any resources that can be recreated.
@@ -52,63 +51,144 @@
 	for (NSHTTPCookie *cookie in cookies) {
 		NSLog(@"Cookie is: %@=%@; %@; %@; %@; %@", cookie.name, cookie.value, cookie.domain, cookie.path, cookie.expiresDate, cookie.sessionOnly?@"Session":@"Permanent");
 	}
-
-
-
 }
+
 - (IBAction)onSetCookieButtonPressed:(UIButton *)sender {
 
-	NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+	/* Configure session, choose between:
+	 * defaultSessionConfiguration
+	 * ephemeralSessionConfiguration
+	 * backgroundSessionConfigurationWithIdentifier:
+	 And set session-wide properties, such as: HTTPAdditionalHeaders,
+	 HTTPCookieAcceptPolicy, requestCachePolicy or timeoutIntervalForRequest.
+	 */
+	NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
 
-	NSURLSession *sessionA = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self.theDelegate delegateQueue:nil];
-	__block NSURL *url_A = [NSURL URLWithString:self.textFieldURL.text];
-	NSMutableURLRequest *request_A = [NSMutableURLRequest requestWithURL:url_A];
-//Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*;q=0.8
-//																					  Accept-Encoding: gzip, deflate
-//																					  Accept-Language: en-US,en;q=0.9
-//																					  Cache-Control: max-age=0
-//																					  Connection: keep-alive
-//																					  Content-Length: 58
-//																					  Content-Type: application/x-www-form-urlencoded
-//																					  Host: www.html-kit.com
-//																					  Origin: http://www.html-kit.com
-//																					  Referer: http://www.html-kit.com/tools/cookietester/
-//																					  Upgrade-Insecure-Requests: 1
-//																					  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36
-	NSDictionary *requestHeaders = @{@"Content-Type": @"application/x-www-form-urlencoded",
-									 @"Accept": @"text/html,application/xhtml+xml,application/xml",
-									 @"Cache-Control": @"max-age=0",
-									 @"Connection" : @"keep-alive",
-									 @"Host": url_A.host,
-									 @"referer": [url_A absoluteString],
-									 @"Upgrade-Insecure-Requests":@"1"
+	/* Create session, and optionally set a NSURLSessionDelegate. */
+	NSURLSession* session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self.theDelegate delegateQueue:nil];
+
+	/* Create the Request:
+	 Request (POST http://www.html-kit.com/tools/cookietester)
+	 */
+
+	NSURL* URL = [NSURL URLWithString:@"http://www.html-kit.com/tools/cookietester"];
+	NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL];
+	request.HTTPMethod = @"POST";
+
+	// Headers
+
+	[request addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+	[request addValue:@"Band=StraightAhead" forHTTPHeaderField:@"Cookie"];
+
+	// Form URL-Encoded Body
+
+	NSDictionary* bodyParameters = @{
+									 @"cn": self.cookieNameTextField.text,
+									 @"cv": self.cookieValueTextField.text,
 									 };
-	[request_A setAllHTTPHeaderFields:requestHeaders];
+	request.HTTPBody = [NSStringFromQueryParameters(bodyParameters) dataUsingEncoding:NSUTF8StringEncoding];
 
-	request_A.cachePolicy=NSURLRequestReloadIgnoringLocalCacheData;
-	request_A.HTTPMethod = @"POST";
+	/* Start a new Task */
+	NSURLSessionDataTask* task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+		NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)response;
 
-	NSMutableDictionary *mapData = [[NSMutableDictionary alloc] init];
-	[mapData setObject:self.cookieNameTextField.text forKey:@"cn"];
-	[mapData setObject:self.cookieValueTextField.text forKey:@"cv"];
-
-	NSError * error;
-	NSData *postData = [NSJSONSerialization dataWithJSONObject:mapData options:0 error:&error];
-	[request_A setHTTPBody:postData];
-
-	NSURLSessionDataTask *dataTask = [sessionA dataTaskWithRequest:request_A completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-		if(error) {
-			NSLog(@"LOSER! %@", [error description]);
+		if (error) {
+			// Failure situation.
+			NSLog(@"Doh! URL Session POST Task Failed: %@", [error localizedDescription]);
 		}
 	}];
-	
-	[dataTask resume];
-	//[sessionA finishTasksAndInvalidate];
+	[task resume];
+	[session finishTasksAndInvalidate];
+
 
 	NSArray *cookies = [NSHTTPCookieStorage sharedHTTPCookieStorage].cookies;
 	for (NSHTTPCookie *cookie in cookies) {
 		NSLog(@"Cookie is: %@=%@; %@; %@; %@; %@", cookie.name, cookie.value, cookie.domain, cookie.path, cookie.expiresDate, cookie.sessionOnly?@"Session":@"Permanent");
 	}
 }
+
+- (IBAction)doGetRequest:(UIButton *)sender {
+
+	/* Configure session, choose between:
+	 * defaultSessionConfiguration
+	 * ephemeralSessionConfiguration
+	 * backgroundSessionConfigurationWithIdentifier:
+	 And set session-wide properties, such as: HTTPAdditionalHeaders,
+	 HTTPCookieAcceptPolicy, requestCachePolicy or timeoutIntervalForRequest.
+	 */
+	NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+
+	/* Create session, and optionally set a NSURLSessionDelegate. */
+	NSURLSession* session = [NSURLSession sessionWithConfiguration:sessionConfig delegate:self.theDelegate delegateQueue:nil];
+
+	/* Create the Request:
+	 Request (POST http://www.html-kit.com/tools/cookietester)
+	 */
+
+	NSURL* URL = [NSURL URLWithString:@"http://www.html-kit.com/tools/cookietester"];
+	NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL];
+	request.HTTPMethod = @"GET";
+
+	/* Start a new Task */
+	NSURLSessionDataTask* task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+		NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)response;
+
+		if (error) {
+			// Failure situation.
+			NSLog(@"Doh! URL Session GET Task Failed: %@", [error localizedDescription]);
+		}
+	}];
+	[task resume];
+	[session finishTasksAndInvalidate];
+}
+
+/*
+ * Utils: Add this section before your class implementation
+ */
+
+- (IBAction)doClearCookies:(UIButton *)sender {
+	NSArray *cookies = [NSHTTPCookieStorage sharedHTTPCookieStorage].cookies;
+	for (NSHTTPCookie *cookie in cookies) {
+		NSLog(@"Clearing Cookie: %@=%@; %@; %@; %@; %@", cookie.name, cookie.value, cookie.domain, cookie.path, cookie.expiresDate, cookie.sessionOnly?@"Session":@"Permanent");
+		[[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+	}
+}
+
+/**
+ This creates a new query parameters string from the given NSDictionary. For
+ example, if the input is @{@"day":@"Tuesday", @"month":@"January"}, the output
+ string will be @"day=Tuesday&month=January".
+ @param queryParameters The input dictionary.
+ @return The created parameters string.
+ */
+static NSString* NSStringFromQueryParameters(NSDictionary* queryParameters)
+{
+	NSMutableArray* parts = [NSMutableArray array];
+	[queryParameters enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
+		NSString *part = [NSString stringWithFormat: @"%@=%@",
+						  [key stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
+						  [value stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]
+						  ];
+		[parts addObject:part];
+	}];
+	return [parts componentsJoinedByString: @"&"];
+}
+
+/**
+ Creates a new URL by adding the given query parameters.
+ @param URL The input URL.
+ @param queryParameters The query parameter dictionary to add.
+ @return A new NSURL.
+ */
+static NSURL* NSURLByAppendingQueryParameters(NSURL* URL, NSDictionary* queryParameters)
+{
+	NSString* URLString = [NSString stringWithFormat:@"%@?%@",
+						   [URL absoluteString],
+						   NSStringFromQueryParameters(queryParameters)
+						   ];
+	return [NSURL URLWithString:URLString];
+}
+
+
 
 @end
